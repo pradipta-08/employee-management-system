@@ -1,0 +1,120 @@
+{
+  "info": {
+    "name": "Employee Manager API",
+    "description": "CRUD endpoints for the Staff Register app. Run the folder top-to-bottom: the Create request stores the new id in {{employeeId}} for the requests after it.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:3000/api" },
+    { "key": "employeeId", "value": "" }
+  ],
+  "item": [
+    {
+      "name": "Create employee",
+      "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": [
+        "pm.test('201 Created', () => pm.response.to.have.status(201));",
+        "const body = pm.response.json();",
+        "pm.test('returns the new record', () => pm.expect(body.data).to.have.property('id'));",
+        "pm.collectionVariables.set('employeeId', body.data.id);"
+      ] } }],
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": { "mode": "raw", "raw": "{\n  \"name\": \"Nisha Verma\",\n  \"department\": \"Engineering\",\n  \"role\": \"Data Engineer\",\n  \"salary\": 1150000,\n  \"joinDate\": \"2024-01-15\"\n}" },
+        "url": { "raw": "{{baseUrl}}/employees", "host": ["{{baseUrl}}"], "path": ["employees"] }
+      }
+    },
+    {
+      "name": "Create employee - validation error",
+      "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": [
+        "pm.test('422 with field details', () => {",
+        "  pm.response.to.have.status(422);",
+        "  pm.expect(pm.response.json().details).to.have.property('name');",
+        "});"
+      ] } }],
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": { "mode": "raw", "raw": "{\n  \"name\": \"\",\n  \"department\": \"Unknown\",\n  \"role\": \"\",\n  \"salary\": -10,\n  \"joinDate\": \"not-a-date\"\n}" },
+        "url": { "raw": "{{baseUrl}}/employees", "host": ["{{baseUrl}}"], "path": ["employees"] }
+      }
+    },
+    {
+      "name": "List employees (search + sort + page)",
+      "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": [
+        "pm.test('200 OK', () => pm.response.to.have.status(200));",
+        "pm.test('has data and meta', () => {",
+        "  const b = pm.response.json();",
+        "  pm.expect(b.data).to.be.an('array');",
+        "  pm.expect(b.meta).to.include.keys('total', 'page', 'pages', 'limit');",
+        "});"
+      ] } }],
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{baseUrl}}/employees?q=engineer&department=Engineering&sort=salary&order=desc&page=1&limit=10",
+          "host": ["{{baseUrl}}"], "path": ["employees"],
+          "query": [
+            { "key": "q", "value": "engineer" },
+            { "key": "department", "value": "Engineering" },
+            { "key": "sort", "value": "salary" },
+            { "key": "order", "value": "desc" },
+            { "key": "page", "value": "1" },
+            { "key": "limit", "value": "10" }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Get employee by id",
+      "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": [
+        "pm.test('200 OK', () => pm.response.to.have.status(200));",
+        "pm.test('id matches', () => pm.expect(pm.response.json().data.id).to.eql(Number(pm.collectionVariables.get('employeeId'))));"
+      ] } }],
+      "request": {
+        "method": "GET",
+        "url": { "raw": "{{baseUrl}}/employees/{{employeeId}}", "host": ["{{baseUrl}}"], "path": ["employees", "{{employeeId}}"] }
+      }
+    },
+    {
+      "name": "Update employee",
+      "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": [
+        "pm.test('200 OK', () => pm.response.to.have.status(200));",
+        "pm.test('role updated', () => pm.expect(pm.response.json().data.role).to.eql('Lead Data Engineer'));"
+      ] } }],
+      "request": {
+        "method": "PUT",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": { "mode": "raw", "raw": "{\n  \"name\": \"Nisha Verma\",\n  \"department\": \"Engineering\",\n  \"role\": \"Lead Data Engineer\",\n  \"salary\": 1450000,\n  \"joinDate\": \"2024-01-15\"\n}" },
+        "url": { "raw": "{{baseUrl}}/employees/{{employeeId}}", "host": ["{{baseUrl}}"], "path": ["employees", "{{employeeId}}"] }
+      }
+    },
+    {
+      "name": "Delete employee",
+      "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": [
+        "pm.test('204 No Content', () => pm.response.to.have.status(204));"
+      ] } }],
+      "request": {
+        "method": "DELETE",
+        "url": { "raw": "{{baseUrl}}/employees/{{employeeId}}", "host": ["{{baseUrl}}"], "path": ["employees", "{{employeeId}}"] }
+      }
+    },
+    {
+      "name": "Get deleted employee - 404",
+      "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": [
+        "pm.test('404 Not Found', () => pm.response.to.have.status(404));"
+      ] } }],
+      "request": {
+        "method": "GET",
+        "url": { "raw": "{{baseUrl}}/employees/{{employeeId}}", "host": ["{{baseUrl}}"], "path": ["employees", "{{employeeId}}"] }
+      }
+    },
+    {
+      "name": "List departments",
+      "request": {
+        "method": "GET",
+        "url": { "raw": "{{baseUrl}}/departments", "host": ["{{baseUrl}}"], "path": ["departments"] }
+      }
+    }
+  ]
+}

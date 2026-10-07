@@ -1,0 +1,19 @@
+{
+  "name": "employee-manager",
+  "version": "1.0.0",
+  "description": "Employee Management System (CRUD) using Express, SQLite and JavaScript",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js",
+    "seed": "node db/seed.js",
+    "test": "node --test test/*.test.js"
+  },
+  "engines": {
+    "node": ">=22.5"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.19.2"
+  }
+}

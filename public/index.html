@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Employee Management System</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div>
+        <h1>Employee Management System</h1>
+        <p class="sub" id="summary">Loading…</p>
+      </div>
+      <button class="btn btn-primary" id="addBtn" type="button">Add Employee</button>
+    </div>
+  </header>
+
+  <main class="page">
+    <section class="toolbar" aria-label="Filters">
+      <label class="search">
+        <span class="visually-hidden">Search employees</span>
+        <input id="search" type="search" placeholder="Search by name, role or department" autocomplete="off">
+      </label>
+      <label class="select-wrap">
+        <span class="visually-hidden">Filter by department</span>
+        <select id="deptFilter">
+          <option value="">All departments</option>
+        </select>
+      </label>
+      <label class="select-wrap small">
+        <span class="visually-hidden">Rows per page</span>
+        <select id="pageSize">
+          <option value="5">5 / page</option>
+          <option value="10" selected>10 / page</option>
+          <option value="25">25 / page</option>
+        </select>
+      </label>
+    </section>
+
+    <section class="table-card" aria-live="polite">
+      <div class="table-scroll">
+        <table id="table">
+          <thead>
+            <tr>
+              <th><button class="sort" data-sort="name" type="button">Name</button></th>
+              <th><button class="sort" data-sort="department" type="button">Department</button></th>
+              <th><button class="sort" data-sort="role" type="button">Role</button></th>
+              <th class="num"><button class="sort" data-sort="salary" type="button">Salary (₹)</button></th>
+              <th><button class="sort" data-sort="joinDate" type="button">Join Date</button></th>
+              <th class="actions-col"><span class="visually-hidden">Actions</span></th>
+            </tr>
+          </thead>
+          <tbody id="tbody"></tbody>
+        </table>
+      </div>
+      <div id="stateBox" class="state-box" hidden></div>
+      <footer class="pager">
+        <span id="rangeText"></span>
+        <div class="pager-btns">
+          <button class="btn btn-ghost" id="prevBtn" type="button">Previous</button>
+          <span id="pageText"></span>
+          <button class="btn btn-ghost" id="nextBtn" type="button">Next</button>
+        </div>
+      </footer>
+    </section>
+  </main>
+
+  <!-- Add / edit -->
+  <dialog id="formDialog" aria-labelledby="formTitle">
+    <form id="empForm" novalidate>
+      <h2 id="formTitle">Add Employee</h2>
+
+      <div class="field">
+        <label for="f-name">Name</label>
+        <input id="f-name" name="name" type="text" maxlength="80" autocomplete="off">
+        <p class="err" data-for="name"></p>
+      </div>
+
+      <div class="row">
+        <div class="field">
+          <label for="f-department">Department</label>
+          <select id="f-department" name="department"></select>
+          <p class="err" data-for="department"></p>
+        </div>
+        <div class="field">
+          <label for="f-role">Role</label>
+          <input id="f-role" name="role" type="text" maxlength="60" autocomplete="off">
+          <p class="err" data-for="role"></p>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="field">
+          <label for="f-salary">Salary (₹)</label>
+          <input id="f-salary" name="salary" type="number" min="0" step="0.01" inputmode="decimal">
+          <p class="err" data-for="salary"></p>
+        </div>
+        <div class="field">
+          <label for="f-joinDate">Join date</label>
+          <input id="f-joinDate" name="joinDate" type="date" min="1970-01-01">
+          <p class="err" data-for="joinDate"></p>
+        </div>
+      </div>
+
+      <p class="err form-err" id="formError" hidden></p>
+
+      <div class="dialog-actions">
+        <button class="btn btn-ghost" type="button" id="cancelForm">Cancel</button>
+        <button class="btn btn-primary" type="submit" id="saveBtn">Save</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- Delete confirmation -->
+  <dialog id="confirmDialog" aria-labelledby="confirmTitle">
+    <h2 id="confirmTitle">Confirm Delete</h2>
+    <p id="confirmText"></p>
+    <p class="err form-err" id="confirmError" hidden></p>
+    <div class="dialog-actions">
+      <button class="btn btn-ghost" type="button" id="cancelDelete">Cancel</button>
+      <button class="btn btn-danger" type="button" id="confirmDelete">Delete</button>
+    </div>
+  </dialog>
+
+  <div id="toasts" class="toasts" role="status" aria-live="polite"></div>
+
+  <script src="js/api.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
